@@ -1,0 +1,20 @@
+Tiled Matrix Multiplication
+
+    In your kernel implementation, how many threads can be simultaneously executing
+    on a GeForce GTX 1080 GPU, which contains 20 Streaming Multiprocessors. Use
+    nvcc --ptxas-options="-v" matrixmul_kernel.cu to see the resource usage of 
+    your kernel (although compilation will fail, it will only do so after
+    compiling the kernel and displaying the relevant information.)
+
+Machine Name :gpulab10
+After execution of the command  nvcc -Xptxas -v matrixmul_kernel.cu --gpu-architecture=sm_61
+the following parameters are used in the Cuda occupancy calculator
+Smversion=sm_6.1(computecapability6.1)
+Threads per block:256(16 TileWidth)
+Registers per Thread:23
+Shared memory perblock(bytes) :2048
+each SM contains 2048 Active threads.
+So number of threads that can be simultaneously executed is NoofSM * NoofActiveThreadsperSM 
+=20*2048
+=40960.
+

@@ -1,0 +1,47 @@
+
+QUESTION:
+
+Consider an MxN sparse matrix with Z non-zeros and a maximum of k non-zeros per
+row.
+    (a) How much storage (in number of words) would a CSR representation of the 
+        matrix require?
+    (b) How much storage (in number of words) would a JDS representation of the 
+        matrix require?
+
+
+ANSWER:
+for CSR 
+Size of row pointer=M+1
+Size of columnindices pointer=noof nonzeroelements in sparse matrix(Z)
+size of nonzerovalues=noof nonzeroelements in sparse matrix(Z)
+total =M+2Z+1
+for JDS
+jdsRowPerm=M
+jdsRowNNZ=M
+jdsColStartIdx=K
+jdsColIdx=noof nonzeroelements in sparse matrix (Z)
+jdsData=noof nonzeroelements in sparse matrix (Z)
+total=2M+K+2Z
+
+
+QUESTION:
+
+In the JDS format, what is the advantage of sorting rows according to the number 
+of non-zero they contain?
+
+
+ANSWER:
+since two close threads performs operations in the sorted order there will be less divergence in a warp.
+
+QUESTION:
+
+In the JDS format, what is the advantage of storing the data contiguously along 
+the jagged diagonal instead of along the row?
+
+
+ANSWER:
+memory coalescing can be achieved if we are storing datacontiguously along the jagged diagonal instead of along the row.
+
+
+
+

@@ -1,0 +1,62 @@
+1 The changes you made for the optimization.
+used shared memory in atomic operation for speed
+used memory coalescing 
+converted the 2d input matrix to 1d matrix to improve the atomic operation since side by side pixel has same value in most of the images.
+used device configuration to increase performance(100%occupancy)
+2. Any difficulties with completing the optimization correctly.
+cannot reshuffle the matrix for more randomized data in one block to avoid expensive atomic operation
+uint 8 is not supported with atomic add
+without comments the code is running faster.
+
+3 The approximate amount of time spent on the optimization (even if it was
+  abandoned before working).
+  3 hours
+
+4 If finished and working, the speedup of the code after the optimization
+was applied
+after optimization
+131.67
+Timing 'ref_2dhisto' started
+        GetTimeOfDay Time (for 50 iterations) = 5.267
+        Clock Time        (for 50 iterations) = 5.27
+    Timing 'ref_2dhisto' ended
+    Timing 'opt_2dhisto' started
+        GetTimeOfDay Time (for 50 iterations) = 0.047
+        Clock Time        (for 50 iterations) = 0.04
+    Timing 'opt_2dhisto' ended
+
+	before optimization
+	65.78x
+	Timing 'ref_2dhisto' started
+        GetTimeOfDay Time (for 50 iterations) = 5.266
+        Clock Time        (for 50 iterations) = 5.26
+    Timing 'ref_2dhisto' ended
+    Timing 'opt_2dhisto' started
+        GetTimeOfDay Time (for 50 iterations) = 0.08
+        Clock Time        (for 50 iterations) = 0.08
+    Timing 'opt_2dhisto' ended
+
+
+		
+		
+		
+		
+		_global__ void opt_2dhisto_kernel(uint32_t *input_data,int inputheight,int inputwidth,uint32_t *input_bins)
+{
+int size=inputheight*inputwidth;
+    __shared__ unsigned int private_histo[HISTO_WIDTH];
+   if (threadIdx.x < HISTO_WIDTH) private_histo[threadIdx.x] = 0;
+   __syncthreads();
+    int i = threadIdx.x + blockIdx.x * blockDim.x;
+    int stride = blockDim.x * gridDim.x;
+    while (i < size) {
+         atomicAdd( &(private_histo[input_data[i]]), 1);
+         i += stride;
+    }
+__syncthreads();
+
+  if (threadIdx.x < HISTO_WIDTH) 
+     atomicAdd( &input_bins[threadIdx.x],private_histo[threadIdx.x] );
+
+
+}

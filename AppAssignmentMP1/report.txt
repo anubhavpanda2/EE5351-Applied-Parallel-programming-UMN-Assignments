@@ -1,0 +1,8 @@
+1 each element in the input matrix is loaded n times for the given two(n*n) matrices.for example if its two  32*32 matices each element will be read 32 times.
+
+2 
+no of additions performed 32
+no of multiplicatins performed 32
+size of float=4bytes
+memory accessed =(32+32)*4bytes
+ratio=(256b/s)/64Flops=(4b/s)/(1flop) 
